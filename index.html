@@ -1,43 +1,168 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Improve blobs' welfare!</title>
-    <meta name="description" content="We strive to improve the welfare of blobs every day by providing resources and access to care for them. Join us in our mission to build a world in which all blobs are valued and protected. Save a blob today!">
-    <meta name="author" content="Association for the Welfare of Binary Large Objects">
-
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Payments Playground</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="json-editor.js"></script>
+    <link rel="stylesheet" href="./styles.css" />
   </head>
-
   <body>
-    <main>
-      <section class="content">
-        <h1>Your gift today saves blobs</h1>
-        <p>Each dollar you give helps us protect blobs around the world. We strive to improve the welfare of blobs every day by providing resources and data lakes for them.</p>
-        <p>Join us in our mission to build a world in which all blobs are valued and protected without having to conform to a hierarchy or fitting into any narrowly defined file format.</p>
-        <p>Save a blob today!</p>
+    <div class="container">
+      <div class="left-panel">
+        <div class="header">
+          <h1>Open Payments Playground</h1>
+          <p>Interact with the Open Payments API</p>
+        </div>
 
-        <h2>Gift information</h2>
-        <form action="/success.html" method="POST">
-          <div class="input-wrapper">
-            <label>Wallet address</label>
-            <input type="text" name="wallet-address" required>
+        <form id="inputForm">
+          <div class="form-group">
+            <label for="method">HTTP Method</label>
+            <select style="padding: 8px" id="method" class="method-select">
+              <option value="GET">GET</option>
+              <option selected value="POST">POST</option>
+              <option value="PUT">PUT</option>
+              <option value="DELETE">DELETE</option>
+              <option value="PATCH">PATCH</option>
+            </select>
           </div>
-          <div class="input-wrapper">
-            <label>Amount</label>
-            <input type="text" name="amount" required>
+
+          <div class="form-group">
+            <label for="url">API Endpoint URL</label>
+            <input
+              type="url"
+              id="url"
+              placeholder="http://localhost:3000/api/create-incoming-payment"
+              required
+            />
           </div>
-          <button>Donate</button>
+
+          <div class="form-group">
+            <label>Templates</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input
+                  id="none"
+                  type="radio"
+                  name="templateType"
+                  value="none"
+                  checked
+                />
+                <span class="radio-custom"></span>
+                None
+              </label>
+
+              <label class="radio-option">
+                <input
+                  id="incoming_payment"
+                  type="radio"
+                  name="templateType"
+                  value="incoming_payment"
+                />
+                <span class="radio-custom"></span>
+                Incoming Payment
+              </label>
+
+              <label class="radio-option">
+                <input
+                  id="qoute"
+                  type="radio"
+                  name="templateType"
+                  value="qoute"
+                />
+                <span class="radio-custom"></span>
+                Qoute
+              </label>
+
+              <label class="radio-option">
+                <input
+                  id="outgoing_payment_auth"
+                  type="radio"
+                  name="templateType"
+                  value="outgoing_payment_auth"
+                />
+                <span class="radio-custom"></span>
+                Outgoing Payment Auth
+              </label>
+
+              <label class="radio-option">
+                <input
+                  id="outgoing_payment"
+                  type="radio"
+                  name="templateType"
+                  value="outgoing_payment"
+                />
+                <span class="radio-custom"></span>
+                Outgoing Payment
+              </label>
+
+              <label class="radio-option">
+                <input
+                  id="subscription_payment"
+                  type="radio"
+                  name="templateType"
+                  value="subscription_payment"
+                />
+                <span class="radio-custom"></span>
+                Subscription Payment
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" id="bodyGroup">
+            <label
+              >Request Body (JSON)
+              <json-editor
+                class="json-container"
+                id="body-json"
+                value=""
+                indent="3"
+              ></json-editor>
+            </label>
+          </div>
+
+          <button type="submit" class="btn">Send Request</button>
         </form>
-      </section>
-      <section class="feature-image">
-        <img src="/img/blob.jpg" alt="Slime by baixinho22louco on https://pixai.art/artwork/1678228936107028547">
-      </section>
-      <small class="credit">Image credit: <a href=https://pixai.art/artwork/1678228936107028547"">baixinho22louco</a></small>
-    </main>
+      </div>
+
+      <div class="right-panel">
+        <!-- history section -->
+        <div class="response-panel">
+          <div class="response-header">
+            <h2>
+              Response History
+              <span id="historyCount" class="history-badge">0</span>
+            </h2>
+            <button id="clearHistoryBtn" class="history-clear-btn">
+              Clear All
+            </button>
+          </div>
+          <div id="historyList" class="history-list">
+            <div class="panel-empty">No request history yet</div>
+          </div>
+        </div>
+
+        <!-- respone section -->
+        <div class="response-panel">
+          <div class="response-header">
+            <h2>Response</h2>
+          </div>
+          <div style="user-select: none" id="responseContainer">
+            <div id="statusInfo" class="panel-empty">
+              Fill out the form on the left and click "Send Request"
+            </div>
+            <json-editor
+              class="json-container"
+              id="response-json"
+              value=""
+              contenteditable="false"
+              indent="3"
+            ></json-editor>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="./script.js"></script>
   </body>
 </html>
