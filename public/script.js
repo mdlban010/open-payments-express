@@ -71,10 +71,10 @@ document
     urlInput.value = window.location.href + "api/outgoing-payment";
     bodyTextarea.json_value = {
       senderWalletAddress: "",
-      continueAccessToken: "",
-      qouteId: "",
       interactRef: "",
+      continueAccessToken: "",
       continueUri: "",
+      qouteId: "",
     };
   });
 
@@ -103,7 +103,7 @@ form.onsubmit = async function (e) {
   // Handle request body
   let requestBody = bodyTextarea.json_value;
 
-  console.log("** request body");
+  console.log(">> request body");
   console.log(requestBody);
 
   // Show loading state
@@ -130,8 +130,9 @@ form.onsubmit = async function (e) {
     const duration = endTime - startTime;
 
     // Display success response
-    console.log("** succ");
+    console.log("<< request response");
     console.log(response);
+
     const statusClass =
       response.status >= 200 && response.status < 300
         ? "status-success"
@@ -160,8 +161,9 @@ form.onsubmit = async function (e) {
     );
   } catch (error) {
     // Display error response (existing error handling)
-    console.log("** error");
+    console.log("!! error");
     console.log(error);
+
     statusInfo.innerHTML =
       '<span class="status-badge status-error">Error</span>';
 

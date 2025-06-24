@@ -6,7 +6,6 @@ import {
   createAuthenticatedClient,
   type PendingGrant,
   isPendingGrant,
-  type OutgoingPaymentWithSpentAmounts,
 } from "@interledger/open-payments";
 import { randomUUID } from "crypto";
 import { type components } from "@interledger/open-payments/dist/openapi/generated/auth-server-types";
@@ -32,7 +31,7 @@ export async function getAuthenticatedClient() {
 export async function getWalletAddressInfo(
   client: AuthenticatedClient,
   walletAddress: string
-): Promise<[string, WalletAddress]> {
+): Promise<{ walletAddress: string; walletAddressDetails: WalletAddress }> {
   if (walletAddress.startsWith("$"))
     walletAddress = walletAddress.replace("$", "https://");
 
@@ -40,7 +39,7 @@ export async function getWalletAddressInfo(
     url: walletAddress,
   });
 
-  return [walletAddress, walletAddressDetails];
+  return { walletAddress, walletAddressDetails };
 }
 
 /**
@@ -94,7 +93,7 @@ export async function createIncomingPayment(
         assetCode: walletAddressDetails.assetCode,
         assetScale: walletAddressDetails.assetScale,
       },
-      expiresAt: new Date(Date.now() + 60_000 * 10).toISOString(),
+      expiresAt: new Date(Date.now() + 60_000 * 30).toISOString(),
     }
   );
 
@@ -307,11 +306,16 @@ export async function processSubscriptionPayment(
   const receiveAmount = (tokenAccessDetails[0].limits as any).receiveAmount
     ?.value;
 
-  const [receiverWalletAddress, receiverWalletAddressDetails] =
+  const { walletAddressDetails: receiverWalletAddressDetails } =
     await getWalletAddressInfo(client, input.receiverWalletAddress);
 
-  const [senderWalletAddress, senderWalletAddressDetails] =
-    await getWalletAddressInfo(client, tokenAccessDetails[0]?.identifier ?? "");
+  const {
+    walletAddress: senderWalletAddress,
+    walletAddressDetails: senderWalletAddressDetails,
+  } = await getWalletAddressInfo(
+    client,
+    tokenAccessDetails[0]?.identifier ?? ""
+  );
 
   // create incoming payment
   const incomingPayment = await createIncomingPayment(

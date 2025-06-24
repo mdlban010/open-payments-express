@@ -63,7 +63,7 @@ app.post(
       const client = await getAuthenticatedClient();
 
       // get wallet details
-      const [walletAddress, walletAddressDetails] = await getWalletAddressInfo(
+      const { walletAddressDetails } = await getWalletAddressInfo(
         client,
         receiverWalletAddress
       );
@@ -74,7 +74,6 @@ app.post(
         amount,
         walletAddressDetails
       );
-      console.log("** return success");
       return res.status(200).json({ data: incomingPayment });
     } catch (err: any) {
       console.error("Error creating incoming payment:", err);
@@ -103,7 +102,7 @@ app.post(
       const client = await getAuthenticatedClient();
 
       // get wallet details
-      const [walletAddress, walletAddressDetails] = await getWalletAddressInfo(
+      const { walletAddressDetails } = await getWalletAddressInfo(
         client,
         senderWalletAddress
       );
@@ -151,7 +150,7 @@ app.post(
       const client = await getAuthenticatedClient();
 
       // get wallet details
-      const [walletAddress, walletAddressDetails] = await getWalletAddressInfo(
+      const { walletAddressDetails } = await getWalletAddressInfo(
         client,
         senderWalletAddress
       );
