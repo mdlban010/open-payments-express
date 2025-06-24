@@ -59,43 +59,15 @@ export async function createIncomingPayment(
   console.log(">> Creating Incoming Payment Resource");
   console.log(walletAddressDetails);
 
-  // Request IP grant
-  const grant = await client.grant.request(
-    {
-      url: walletAddressDetails.authServer,
-    },
-    {
-      access_token: {
-        access: [
-          {
-            type: "incoming-payment",
-            actions: ["read", "create", "complete"],
-          },
-        ],
-      },
-    }
-  );
+  // TODO: Request IP grant
+  const grant: PendingGrant | Grant | undefined = undefined;
 
-  if (isPendingGrant(grant)) {
+  if (grant && isPendingGrant(grant)) {
     throw new Error("Expected non-interactive grant");
   }
 
-  // create incoming payment
-  const incomingPayment = await client.incomingPayment.create(
-    {
-      url: new URL(walletAddressDetails.id).origin,
-      accessToken: grant.access_token.value,
-    },
-    {
-      walletAddress: walletAddressDetails.id,
-      incomingAmount: {
-        value: value,
-        assetCode: walletAddressDetails.assetCode,
-        assetScale: walletAddressDetails.assetScale,
-      },
-      expiresAt: new Date(Date.now() + 60_000 * 30).toISOString(),
-    }
-  );
+  // TODO: create incoming payment
+  const incomingPayment: any = undefined;
 
   console.log("<< Resource created");
   console.log(incomingPayment);
@@ -120,39 +92,15 @@ export async function createQoute(
   console.log(">> Creating quoute");
   console.log(walletAddressDetails);
 
-  // Request Qoute grant
-  const grant = await client.grant.request(
-    {
-      url: walletAddressDetails.authServer,
-    },
-    {
-      access_token: {
-        access: [
-          {
-            type: "quote",
-            actions: ["create", "read", "read-all"],
-          },
-        ],
-      },
-    }
-  );
+  // TODO: Request Qoute grant
+  const grant: PendingGrant | Grant | undefined = undefined;
 
-  if (isPendingGrant(grant)) {
+  if (grant && isPendingGrant(grant)) {
     throw new Error("Expected non-interactive grant");
   }
 
-  // create qoute
-  const qoute = await client.quote.create(
-    {
-      url: new URL(walletAddressDetails.id).origin,
-      accessToken: grant.access_token.value,
-    },
-    {
-      method: "ilp",
-      walletAddress: walletAddressDetails.id,
-      receiver: incomingPaymentUrl,
-    }
-  );
+  // TODO: create qoute
+  const qoute: any = undefined;
 
   console.log("<< Qoute created");
   console.log(qoute);
@@ -174,7 +122,7 @@ export async function getOutgoingPaymentAuthorization(
   client: AuthenticatedClient,
   input: any,
   walletAddressDetails: WalletAddress
-): Promise<PendingGrant> {
+): Promise<PendingGrant | undefined> {
   console.log(">> Getting link to authorize outgoing payment grant request");
   console.log(walletAddressDetails);
 
@@ -182,50 +130,14 @@ export async function getOutgoingPaymentAuthorization(
   const debitAmount = input.debitAmount;
   const receiveAmount = input.receiveAmount;
 
-  // Request OP grant
-  const grant = await client.grant.request(
-    {
-      url: walletAddressDetails.authServer,
-    },
-    {
-      access_token: {
-        access: [
-          {
-            identifier: walletAddressDetails.id,
-            type: "outgoing-payment",
-            actions: ["list", "list-all", "read", "read-all", "create"],
-            limits: {
-              ...{
-                debitAmount: debitAmount,
-                receiveAmount: receiveAmount,
-              },
-              ...(input.type === "new_subscription"
-                ? {
-                    interval: `R${input.payments}/${dateNow}/${
-                      input.duration ?? "PT10M"
-                    }`,
-                  }
-                : {}),
-            },
-          },
-        ],
-      },
-      interact: {
-        start: ["redirect"],
-        finish: {
-          method: "redirect",
-          uri: input.redirectUrl,
-          nonce: randomUUID(),
-        },
-      },
-    }
-  );
+  // TODO: Request outgoing payment pending grant
+  const grant: PendingGrant | Grant | undefined = undefined;
 
-  if (!isPendingGrant(grant)) {
+  if (grant && !isPendingGrant(grant)) {
     throw new Error("Expected interactive grant");
   }
 
-  console.log("<< Link for authorization obtained");
+  console.log("<< Pending outgoing grant obtained");
   return grant;
 }
 
@@ -248,30 +160,18 @@ export async function createOutgoingPayment(
   console.log(">> Creating outgoing payment");
   console.log(input);
 
-  // Get the grant since it was still pending
-  const grant = (await client.grant.continue(
-    {
-      accessToken: input.continueAccessToken,
-      url: input.continueUri,
-    },
-    {
-      interact_ref: input.interactRef,
-    }
-  )) as Grant;
+  // TODO: Get the grant since it was still pending
+  const grant: PendingGrant | Grant | undefined = undefined;
 
   console.log("<< Outgoing payment grant");
   console.log(grant);
 
-  const outgoingPayment = await client.outgoingPayment.create(
-    {
-      url: new URL(walletAddress).origin,
-      accessToken: grant.access_token.value, //OUTGOING_PAYMENT_ACCESS_TOKEN,
-    },
-    {
-      walletAddress: walletAddress,
-      quoteId: input.qouteId, //QUOTE_URL,
-    }
-  );
+  if (grant && isPendingGrant(grant)) {
+    throw new Error("Expected non-interactive grant");
+  }
+
+  // TODO: create outgoing payment
+  const outgoingPayment: any = undefined;
 
   console.log("<< Outgoing payment created");
   console.log(outgoingPayment);
@@ -279,6 +179,13 @@ export async function createOutgoingPayment(
   return outgoingPayment;
 }
 
+/**
+ * This method creates an outgoing payment for a recurring payment
+ *
+ * @param client
+ * @param input
+ * @returns
+ */
 export async function processSubscriptionPayment(
   client: AuthenticatedClient,
   input: any

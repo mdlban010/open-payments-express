@@ -2,21 +2,37 @@
 
 A lightweight application to show the Open Payments API functions.
 
+## Requirements
+
+Before you begin, you need to install the following tools:
+
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [Node (>= v18.18)](https://nodejs.org/en/download/)
+- [Git](https://git-scm.com/downloads)
+
 ## Quick Start
 
-### 1. Install Dependencies
+### 1. Clone the repository
+
+Open `Visual Studio Code` and open a `terminal` in your Visual Studio Code. Then run this command below:
+
+\`\`\`bash
+git clone https://github.com/FinHubSA/open-payments-express.git
+\`\`\`
+
+### 2. Install Dependencies
 
 \`\`\`bash
 npm install
 \`\`\`
 
-### 2. Setup `.env` file
+### 3. Setup `.env` file
 
 - Follow this tutorial to setup [test wallet](https://openpayments.dev/sdk/before-you-begin/)
 - Copy key ID and the wallet address into the `.env` file
-- Put the private key in the root folder i.e. uct-hackathon-2024/private.key
+- Put the private key in the root folder i.e. open-payments-express/private.key
 
-### 3. Start the Server
+### 4. Start the Server
 
 \`\`\`bash
 
