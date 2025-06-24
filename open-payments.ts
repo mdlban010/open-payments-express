@@ -76,15 +76,15 @@ export async function createIncomingPayment(
 }
 
 /**
- * The method requests a grant to create a qoute on the senders resource server
- * The qoute is then created on the senders resource server
+ * The method requests a grant to create a quote on the senders resource server
+ * The quote is then created on the senders resource server
  *
  * @param client
- * @param incomingPaymentUrl - identifier for the incoming payment the qoute is being created for
+ * @param incomingPaymentUrl - identifier for the incoming payment the quote is being created for
  * @param walletAddressDetails - wallet address details for the sender
  * @returns
  */
-export async function createQoute(
+export async function createQuote(
   client: AuthenticatedClient,
   incomingPaymentUrl: string,
   walletAddressDetails: WalletAddress
@@ -92,20 +92,20 @@ export async function createQoute(
   console.log(">> Creating quoute");
   console.log(walletAddressDetails);
 
-  // TODO: Request Qoute grant
+  // TODO: Request Quote grant
   const grant: PendingGrant | Grant | undefined = undefined;
 
   if (grant && isPendingGrant(grant)) {
     throw new Error("Expected non-interactive grant");
   }
 
-  // TODO: create qoute
-  const qoute: any = undefined;
+  // TODO: create quote
+  const quote: any = undefined;
 
-  console.log("<< Qoute created");
-  console.log(qoute);
+  console.log("<< Quote created");
+  console.log(quote);
 
-  return qoute;
+  return quote;
 }
 
 /**
@@ -114,7 +114,7 @@ export async function createQoute(
  * Tells the client to go ask sender for approval and details of where to come back to continue the process
  *
  * @param client
- * @param input - details from the qoute
+ * @param input - details from the quote
  * @param walletAddressDetails - wallet address details for the sender
  * @returns
  */
@@ -231,8 +231,8 @@ export async function processSubscriptionPayment(
     receiverWalletAddressDetails
   );
 
-  // create qoute
-  const quote = await createQoute(
+  // create quote
+  const quote = await createQuote(
     client,
     incomingPayment.id,
     senderWalletAddressDetails

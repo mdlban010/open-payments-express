@@ -4,7 +4,7 @@ import path from "path";
 import {
   createIncomingPayment,
   createOutgoingPayment,
-  createQoute,
+  createQuote,
   getAuthenticatedClient,
   getOutgoingPaymentAuthorization,
   getWalletAddressInfo,
@@ -85,7 +85,7 @@ app.post(
 );
 
 app.post(
-  "/api/create-qoute",
+  "/api/create-quote",
   async (req: Request, res: Response): Promise<any> => {
     const { senderWalletAddress, incomingPaymentUrl } = req.body;
 
@@ -107,13 +107,13 @@ app.post(
         senderWalletAddress
       );
 
-      // create qoute
-      const qoute = await createQoute(
+      // create quote
+      const quote = await createQuote(
         client,
         incomingPaymentUrl,
         walletAddressDetails
       );
-      return res.status(200).json({ data: qoute });
+      return res.status(200).json({ data: quote });
     } catch (err: any) {
       console.error("Error creating incoming payment:", err);
       return res
@@ -128,7 +128,7 @@ app.post(
   async (req: Request, res: Response): Promise<any> => {
     const {
       senderWalletAddress,
-      qouteId,
+      quoteId,
       debitAmount,
       receiveAmount,
       type,
@@ -137,7 +137,7 @@ app.post(
       duration,
     } = req.body;
 
-    if (!senderWalletAddress || !qouteId) {
+    if (!senderWalletAddress || !quoteId) {
       return res.status(400).json({
         error: "Validation failed",
         message: "Please fill in all the required fields",
@@ -159,7 +159,7 @@ app.post(
       const outgoingPaymentAuthResponse = await getOutgoingPaymentAuthorization(
         client,
         {
-          qouteId,
+          quoteId,
           debitAmount,
           receiveAmount,
           type,
@@ -185,12 +185,12 @@ app.post(
     const {
       senderWalletAddress,
       continueAccessToken,
-      qouteId,
+      quoteId,
       interactRef,
       continueUri,
     } = req.body;
 
-    if (!senderWalletAddress || !qouteId) {
+    if (!senderWalletAddress || !quoteId) {
       return res.status(400).json({
         error: "Validation failed",
         message: "Please fill in all the required fields",
@@ -206,7 +206,7 @@ app.post(
       const outgoingPaymentResponse = await createOutgoingPayment(client, {
         senderWalletAddress,
         continueAccessToken,
-        qouteId,
+        quoteId,
         interactRef,
         continueUri,
       });
@@ -285,7 +285,7 @@ app.listen(PORT, () => {
     "  POST   /api/create-incoming-payment  - Create incoming payment resource on receiver account"
   );
   console.log(
-    "  POST   /api/create-qoute             - Create qoute resource on sender account"
+    "  POST   /api/create-quote             - Create quote resource on sender account"
   );
   console.log(
     "  POST   /api/outgoing-payment-auth    - Get continuation grant for an outgoing payment on the sender's account"
