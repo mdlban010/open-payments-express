@@ -16,15 +16,15 @@ Before you begin, you need to install the following tools:
 
 Open `Visual Studio Code` and open a `terminal` in your Visual Studio Code. Then run this command below:
 
-\`\`\`bash
+```bash
 git clone https://github.com/FinHubSA/open-payments-express.git
-\`\`\`
+```
 
 ### 2. Install Dependencies
 
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 ### 3. Setup `.env` file
 
@@ -34,10 +34,9 @@ npm install
 
 ### 4. Start the Server
 
-\`\`\`bash
-
+```bash
 # Development mode with auto-restart
-
 npm run dev
+```
 
 The server will start on `http://localhost:3001`
