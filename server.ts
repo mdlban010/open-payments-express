@@ -203,14 +203,24 @@ app.post(
       // Initialize Open Payments client
       const client = await getAuthenticatedClient();
 
+      // get wallet details
+      const { walletAddressDetails } = await getWalletAddressInfo(
+        client!,
+        senderWalletAddress
+      );
+
       // create outgoing payment resource
-      const outgoingPaymentResponse = await createOutgoingPayment(client!, {
-        senderWalletAddress,
-        continueAccessToken,
-        quoteId,
-        interactRef,
-        continueUri,
-      });
+      const outgoingPaymentResponse = await createOutgoingPayment(
+        client!,
+        {
+          senderWalletAddress,
+          continueAccessToken,
+          quoteId,
+          interactRef,
+          continueUri,
+        },
+        senderWalletAddress
+      );
 
       return res.status(200).json({ data: outgoingPaymentResponse });
     } catch (err: any) {

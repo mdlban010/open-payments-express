@@ -148,11 +148,13 @@ export async function createOutgoingPaymentPendingGrant(
  *
  * @param client
  * @param input
+ * @param walletAddressDetails - wallet address details for the sender
  * @returns
  */
 export async function createOutgoingPayment(
   client: AuthenticatedClient,
-  input: any
+  input: any,
+  walletAddressDetails: WalletAddress
 ) {
   let walletAddress = input.senderWalletAddress;
   if (walletAddress.startsWith("$"))
