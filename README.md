@@ -28,9 +28,11 @@ npm install
 
 ### 3. Setup `.env` file
 
-- Follow this tutorial to setup [test wallet](https://openpayments.dev/sdk/before-you-begin/)
-- Copy key ID and the wallet address into the `.env` file
-- Put the private key in the root folder i.e. open-payments-express/private.key
+- Follow this tutorial to setup your [test wallet](https://openpayments.dev/sdk/before-you-begin/)
+- Create a new `.env` file, right next to the `.env.example` and copy all code from `.env.example` to `.env`.
+- Copy key ID and the wallet address into the `.env` file.
+- Put the private key in the root folder i.e. open-payments-express/private.key.
+  > Note: The private key file was saved and generated automatically when you created `Developer Keys` for your wallet address.
 
 ### 4. Start the Server
 
