@@ -19,11 +19,8 @@ export async function getAuthenticatedClient() {
     walletAddress = walletAddress.replace("$", "https://");
   }
 
-  const client = await createAuthenticatedClient({
-    walletAddressUrl: process.env.OPEN_PAYMENTS_CLIENT_ADDRESS ?? "",
-    privateKey: process.env.OPEN_PAYMENTS_SECRET_KEY_PATH ?? "",
-    keyId: process.env.OPEN_PAYMENTS_KEY_ID ?? "",
-  });
+  // TODO: create authenticated client object
+  const client: AuthenticatedClient | undefined = undefined;
 
   return client;
 }
@@ -32,12 +29,16 @@ export async function getWalletAddressInfo(
   client: AuthenticatedClient,
   walletAddress: string
 ): Promise<{ walletAddress: string; walletAddressDetails: WalletAddress }> {
-  if (walletAddress.startsWith("$"))
+  if (walletAddress && walletAddress.startsWith("$")) {
     walletAddress = walletAddress.replace("$", "https://");
+  }
 
-  const walletAddressDetails = await client.walletAddress.get({
+  const walletAddressDetails: WalletAddress = await client.walletAddress.get({
     url: walletAddress,
   });
+
+  console.log("<< Wallet address details");
+  console.log(walletAddressDetails);
 
   return { walletAddress, walletAddressDetails };
 }
@@ -118,7 +119,7 @@ export async function createQuote(
  * @param walletAddressDetails - wallet address details for the sender
  * @returns
  */
-export async function getOutgoingPaymentAuthorization(
+export async function createOutgoingPaymentPendingGrant(
   client: AuthenticatedClient,
   input: any,
   walletAddressDetails: WalletAddress

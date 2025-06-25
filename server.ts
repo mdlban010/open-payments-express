@@ -6,7 +6,7 @@ import {
   createOutgoingPayment,
   createQuote,
   getAuthenticatedClient,
-  getOutgoingPaymentAuthorization,
+  createOutgoingPaymentPendingGrant,
   getWalletAddressInfo,
   processSubscriptionPayment,
 } from "./open-payments";
@@ -64,13 +64,13 @@ app.post(
 
       // get wallet details
       const { walletAddressDetails } = await getWalletAddressInfo(
-        client,
+        client!,
         receiverWalletAddress
       );
 
       // create incoming payment resource
       const incomingPayment = await createIncomingPayment(
-        client,
+        client!,
         amount,
         walletAddressDetails
       );
@@ -103,13 +103,13 @@ app.post(
 
       // get wallet details
       const { walletAddressDetails } = await getWalletAddressInfo(
-        client,
+        client!,
         senderWalletAddress
       );
 
       // create quote
       const quote = await createQuote(
-        client,
+        client!,
         incomingPaymentUrl,
         walletAddressDetails
       );
@@ -151,24 +151,25 @@ app.post(
 
       // get wallet details
       const { walletAddressDetails } = await getWalletAddressInfo(
-        client,
+        client!,
         senderWalletAddress
       );
 
       // get outgoing payment auth actioning details
-      const outgoingPaymentAuthResponse = await getOutgoingPaymentAuthorization(
-        client,
-        {
-          quoteId,
-          debitAmount,
-          receiveAmount,
-          type,
-          payments,
-          redirectUrl,
-          duration,
-        },
-        walletAddressDetails
-      );
+      const outgoingPaymentAuthResponse =
+        await createOutgoingPaymentPendingGrant(
+          client!,
+          {
+            quoteId,
+            debitAmount,
+            receiveAmount,
+            type,
+            payments,
+            redirectUrl,
+            duration,
+          },
+          walletAddressDetails
+        );
       return res.status(200).json({ data: outgoingPaymentAuthResponse });
     } catch (err: any) {
       console.error("Error creating incoming payment:", err);
@@ -203,7 +204,7 @@ app.post(
       const client = await getAuthenticatedClient();
 
       // create outgoing payment resource
-      const outgoingPaymentResponse = await createOutgoingPayment(client, {
+      const outgoingPaymentResponse = await createOutgoingPayment(client!, {
         senderWalletAddress,
         continueAccessToken,
         quoteId,
@@ -239,11 +240,14 @@ app.post(
       const client = await getAuthenticatedClient();
 
       // create outgoing authorization grant
-      const outgoingPaymentResponse = await processSubscriptionPayment(client, {
-        receiverWalletAddress,
-        manageUrl,
-        previousToken,
-      });
+      const outgoingPaymentResponse = await processSubscriptionPayment(
+        client!,
+        {
+          receiverWalletAddress,
+          manageUrl,
+          previousToken,
+        }
+      );
 
       return res.status(200).json({ data: outgoingPaymentResponse });
     } catch (err: any) {
