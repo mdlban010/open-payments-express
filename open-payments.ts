@@ -20,7 +20,11 @@ export async function getAuthenticatedClient() {
   }
 
   // TODO: create authenticated client object
-  const client: AuthenticatedClient | undefined = undefined;
+  const client: AuthenticatedClient | undefined = await createAuthenticatedClient({
+    keyId: process.env.OPEN_PAYMENTS_KEY_ID?? "",
+    walletAddressUrl: process.env.OPEN_PAYMENTS_CLIENT_ADDRESS ?? "",
+    privateKey: process.env.OPEN_PAYMENTS_SECRET_KEY_PATH ?? "",
+  });
 
   return client;
 }
@@ -61,14 +65,36 @@ export async function createIncomingPayment(
   console.log(walletAddressDetails);
 
   // TODO: Request IP grant
-  const grant: PendingGrant | Grant | undefined = undefined;
+  const grant: PendingGrant | Grant | undefined = await client.grant.request(
+    {
+    url: walletAddressDetails.authServer,
+    },{access_token:{access:[{type:"incoming-payment", actions: ["create"]}]
+      }
+
+    },
+
+);
 
   if (grant && isPendingGrant(grant)) {
     throw new Error("Expected non-interactive grant");
   }
 
   // TODO: create incoming payment
-  const incomingPayment: any = undefined;
+  const incomingPayment: any = await client.incomingPayment.create(
+    {
+    url: walletAddressDetails.resourceServer,
+    accessToken: grant.access_token.value,
+    },
+    {
+      walletAddress:walletAddressDetails.id,
+      incomingAmount: {
+      value:value, 
+      assetCode: walletAddressDetails.assetCode, 
+      assetScale: walletAddressDetails.assetScale
+    },
+     expiresAt: new Date(Date.now() + 60_000 * 120).toISOString(),
+    }
+);
 
   console.log("<< Resource created");
   console.log(incomingPayment);
@@ -94,14 +120,39 @@ export async function createQuote(
   console.log(walletAddressDetails);
 
   // TODO: Request Quote grant
-  const grant: PendingGrant | Grant | undefined = undefined;
+  const grant: PendingGrant | Grant | undefined = await client.grant.request(
+    {
+      url: walletAddressDetails.authServer,
+    },
+    {
+      access_token: {
+        access: [
+          {
+            type: "quote",
+            actions: ["create", "read", "read-all"],
+          },
+        ],
+      },
+    }
+  );
 
   if (grant && isPendingGrant(grant)) {
     throw new Error("Expected non-interactive grant");
   }
 
   // TODO: create quote
-  const quote: any = undefined;
+  const quote: any = await client.quote.create(
+    {
+
+    url: walletAddressDetails.resourceServer,
+    accessToken: grant.access_token.value,
+    },
+    {
+      method: "ilp",
+      walletAddress: walletAddressDetails.id,
+      receiver: incomingPaymentUrl,
+    }
+);
 
   console.log("<< Quote created");
   console.log(quote);
